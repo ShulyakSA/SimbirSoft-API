@@ -1,48 +1,39 @@
 package com.simbirsoft.tests;
 
 import com.simbirsoft.model.Addition;
-import com.simbirsoft.model.RequestModel;
+import com.simbirsoft.model.RequestCreateEntityModel;
 import com.simbirsoft.steps.Steps;
 import io.qameta.allure.Description;
-import io.qameta.allure.Step;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.Locale;
+import static com.simbirsoft.config.ConfigProvider.getProperty;
+import static com.simbirsoft.generators.TestDataGenerator.*;
+import static java.lang.Boolean.parseBoolean;
 
 public class UpdateEntityTest extends BaseTest {
     private String entityId;
-    private String additionalInfo = "Дополнительные сведения";
-    private String additionalInfoUpdate = "Обновленные сведения";
-    private int additionalNumber = 123;
-    private String title = "Заголовок сущности";
-    private Boolean verified = true;
-    private int[] importantNumbers = {65, 98, 45};
-
-    private String expectedDate = LocalDate.now().format((DateTimeFormatter.ofPattern("EEE, dd MMM yyyy", Locale.ENGLISH)));
 
     @BeforeEach
     public void beforeEach() {
-        entityId = Steps.createEntity(requestSpecification, additionalInfo, additionalNumber, title, verified, importantNumbers);
+        entityId = Steps.createEntity(requestSpecification);
     }
 
     @Test
-    @Description("Обновление сущности")
-    @Step("Выполнить 'PATCH' запрос. В хэдере ответа получена дата обновления, равная текущей")
+    @DisplayName("Обновление сущности")
+    @Description("Выполнить 'PATCH' запрос. В хэдере ответа получена дата обновления, равная текущей")
     public void updateEntityTest() {
-        RequestModel requestModel = new RequestModel();
+        RequestCreateEntityModel requestModel = new RequestCreateEntityModel();
         requestModel.setAddition(Addition.builder()
-                .additionalInfo(additionalInfoUpdate)
-                .additionalNumber(additionalNumber)
+                .additionalInfo(getProperty("additionalInfoUpdate"))
+                .additionalNumber(getRandomInt(1000))
                 .build());
-        requestModel.setImportantNumbers(importantNumbers);
-        requestModel.setTitle(title);
-        requestModel.setVerified(verified);
-
+        requestModel.setImportantNumbers(getRandomIntegerList(3));
+        requestModel.setTitle(getProperty("title"));
+        requestModel.setVerified(parseBoolean(getProperty("verified")));
         requestSpecification
                 .basePath("patch/")
                 .body(requestModel)
@@ -50,7 +41,7 @@ public class UpdateEntityTest extends BaseTest {
                 .patch(entityId)
                 .then()
                 .statusCode(204)
-                .header("date", Matchers.containsString(expectedDate));
-        Assertions.assertEquals(additionalInfoUpdate, Steps.getAdditionalInfo(requestSpecification, entityId));
+                .header("date", Matchers.containsString(getDateNowAsString("EEE, dd MMM yyyy")));
+        Assertions.assertEquals(getProperty("additionalInfoUpdate"), Steps.getAdditionalInfo(requestSpecification, entityId));
     }
 }

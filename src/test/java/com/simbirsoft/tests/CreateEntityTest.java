@@ -1,35 +1,33 @@
 package com.simbirsoft.tests;
 
 import com.simbirsoft.model.Addition;
-import com.simbirsoft.model.RequestModel;
+import com.simbirsoft.model.RequestCreateEntityModel;
 
 import io.qameta.allure.Description;
-import io.qameta.allure.Step;
-
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import static com.simbirsoft.config.ConfigProvider.getProperty;
+import static com.simbirsoft.generators.TestDataGenerator.getRandomInt;
+import static com.simbirsoft.generators.TestDataGenerator.getRandomIntegerList;
 import static com.simbirsoft.steps.Steps.getEntityId;
+import static java.lang.Integer.parseInt;
 
 public class CreateEntityTest extends BaseTest {
-    private String additionalInfo = "Дополнительные сведения";
-    private int additionalNumber = 123;
-    private String title = "Заголовок сущности";
-    private Boolean verified = true;
-    private int[] importantNumbers = {65, 98, 45};
 
     @Test
-    @Description("Создание сущности")
-    @Step("Выполнить 'POST' запрос. В ответе получен 'Id' созданной сущности")
+    @Description("Выполнить 'POST' запрос. В ответе получен 'Id' созданной сущности")
+    @DisplayName("Создание сущности")
     public void createEntityTest() {
-        RequestModel requestModel = new RequestModel();
+        RequestCreateEntityModel requestModel = new RequestCreateEntityModel();
         requestModel.setAddition(Addition.builder()
-                .additionalInfo(additionalInfo)
-                .additionalNumber(additionalNumber)
+                .additionalInfo(getProperty("additionalInfo"))
+                .additionalNumber(getRandomInt(1000))
                 .build());
-        requestModel.setImportantNumbers(importantNumbers);
-        requestModel.setTitle(title);
-        requestModel.setVerified(verified);
+        requestModel.setImportantNumbers(getRandomIntegerList(3));
+        requestModel.setTitle(getProperty("title"));
+        requestModel.setVerified(Boolean.parseBoolean(getProperty("verified")));
         String request = requestSpecification
                 .body(requestModel)
                 .when()
@@ -38,6 +36,6 @@ public class CreateEntityTest extends BaseTest {
                 .statusCode(200)
                 .extract()
                 .body().asString();
-        Assertions.assertEquals(Integer.parseInt(request), getEntityId(requestSpecification, request));
+        Assertions.assertEquals(parseInt(request), getEntityId(requestSpecification, request));
     }
 }
