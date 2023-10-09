@@ -19,6 +19,7 @@
         <allure-junit5.version>2.22.0</allure-junit5.version>
         <junit.jupiter.version>5.9.2</junit.jupiter.version>
         <junit.platform.version>1.9.2</junit.platform.version>
+        <allure.rest.assured.version>2.22.0</allure.rest.assured.version>
     </properties>
     <build>
         <plugins>
@@ -52,8 +53,8 @@
                         <configurationParameters>
                             junit.jupiter.execution.parallel.enabled=true
                             junit.jupiter.execution.parallel.config.strategy=fixed
-                            junit.jupiter.execution.parallel.config.fixed.parallelism=3
-                            junit.jupiter.execution.parallel.mode.default=same_thread
+                            junit.jupiter.execution.parallel.config.fixed.parallelism=2
+                            junit.jupiter.execution.parallel.mode.default=concurrent
                             junit.jupiter.execution.parallel.mode.classes.default=same_thread
                         </configurationParameters>
                     </properties>
@@ -125,31 +126,15 @@
             <artifactId>allure-junit5</artifactId>
             <version>${allure-junit5.version}</version>
         </dependency>
-        <!--        <dependency>-->
-<!--            <groupId>org.assertj</groupId>-->
-<!--            <artifactId>assertj-core</artifactId>-->
-<!--            <version>3.24.2</version>-->
-<!--            <scope>test</scope>-->
-<!--        </dependency>-->
-<!--        <dependency>-->
-<!--            <groupId>org.seleniumhq.selenium</groupId>-->
-<!--            <artifactId>selenium-java</artifactId>-->
-<!--            <version>4.8.3</version>-->
-<!--        </dependency>-->
         <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-core</artifactId>
-            <version>1.4.6</version>
+            <groupId>io.qameta.allure</groupId>
+            <artifactId>allure-rest-assured</artifactId>
+            <version>${allure.rest.assured.version}</version>
         </dependency>
         <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-classic</artifactId>
-            <version>1.4.6</version>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.26</version>
         </dependency>
-<!--        <dependency>-->
-<!--            <groupId>io.github.bonigarcia</groupId>-->
-<!--            <artifactId>webdrivermanager</artifactId>-->
-<!--            <version>5.5.3</version>-->
-<!--        </dependency>-->
     </dependencies>
 </project>
